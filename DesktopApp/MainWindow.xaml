@@ -1,0 +1,389 @@
+﻿<Window x:Class="DesktopApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DesktopApp"
+        xmlns:components="clr-namespace:DesktopApp.Components"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen" WindowState="Maximized"
+        Title="MainWindow" Height="450" Width="800">
+
+    <Window.Resources>
+
+        <components:NonNegativeDecimalValidationRule x:Key="NonNegativeDecimalValidationRule" />
+
+        <components:DepartmentIdValidationRule x:Key="DepartmentIdValidationRule" />
+
+        <components:EmptyOrWhitespaceStringValidationRule 
+            x:Key="StringValidationRule"/>
+
+        <Style x:Key="HasValidation">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="FrameworkElement.ToolTip"
+                            Value="{Binding RelativeSource={RelativeSource Self},
+                    Path=(Validation.Errors)[0].ErrorContent}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid>
+        <TabControl Name="tcTabs">
+            <TabItem Header="Подразделения" Name="tiDepartments">
+                <TabItem.Resources>
+
+                    <DataGridTemplateColumn Header="Название" Width="10*" 
+                                            x:Key="dgcDepartmentsName"
+                                            x:Shared="False">
+
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Style="{StaticResource ResourceKey=HasValidation}">
+                                    <TextBox.Text>
+                                        <Binding Path="Name" Mode="TwoWay" UpdateSourceTrigger="LostFocus">
+                                            <Binding.ValidationRules>
+                                                <StaticResource ResourceKey="StringValidationRule"/>
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+
+                    </DataGridTemplateColumn>
+
+                </TabItem.Resources>
+
+                <Grid>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="6*"/>
+                        <RowDefinition Height="1.5*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="3*"/>
+                    </Grid.RowDefinitions>
+
+                    <DataGrid AutoGenerateColumns="False" 
+                              CanUserAddRows="False"
+                              Name="dgDepartments"
+                              Grid.Row="0"
+                              SelectionUnit="FullRow"
+                              ItemsSource="{Binding Mode=OneWay, Path=Departments}"
+                              SelectionChanged="DenySelectionChanged">
+
+                        <DataGrid.Columns>
+
+                            <StaticResource ResourceKey="dgcDepartmentsName"/>
+
+                        </DataGrid.Columns>
+
+                    </DataGrid>
+
+                    <Button HorizontalAlignment="Right"
+                            Width="100" Height="30" Margin="10"
+                            Name="btnDelDepartment"
+                            Grid.Row="1">
+                        Удалить
+                    </Button>
+
+                    <GridSplitter Grid.Row="2" 
+                                  Height="3" 
+                                  HorizontalAlignment="Stretch"
+                                  ShowsPreview="True"/>
+
+                    <GroupBox Header="Добавление подразделения" 
+                              Grid.Row="3">
+
+                        <StackPanel>
+
+                            <DataGrid AutoGenerateColumns="False" 
+                                      CanUserAddRows="False"
+                                      Name="dgDepartmentToAdd"
+                                      SelectionChanged="DenySelectionChanged"
+                                      ItemsSource="{Binding Path=DepartmentToAdd}">
+
+                                <DataGrid.Columns>
+
+                                    <StaticResource ResourceKey="dgcDepartmentsName"/>
+
+                                </DataGrid.Columns>
+
+                            </DataGrid>
+
+                            <Button HorizontalAlignment="Right"
+                                    Width="100" Height="30" Margin="10"
+                                    Name="btnAddDepartments">
+                                Добавить
+                            </Button>
+
+                        </StackPanel>
+
+                    </GroupBox>
+
+                </Grid>
+
+            </TabItem>
+            <TabItem Header="Сотрудники" Name="tiWorkers">
+
+                <TabItem.Resources>
+
+                    <DataGridTemplateColumn 
+                        Header="Фамилия" 
+                        Width="10*"
+                        x:Key="dgcWorkerLastName"
+                        x:Shared="False">
+
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Style="{StaticResource ResourceKey=HasValidation}">
+                                    <TextBox.Text>
+                                        <Binding Path="LastName" Mode="TwoWay" UpdateSourceTrigger="LostFocus">
+                                            <Binding.ValidationRules>
+                                                <StaticResource ResourceKey="StringValidationRule"/>
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn 
+                        Header="Имя" 
+                        Width="6*"
+                        x:Key="dgcWorkerFirstName"
+                        x:Shared="False">
+
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Style="{StaticResource ResourceKey=HasValidation}">
+                                    <TextBox.Text>
+                                        <Binding Path="FirstName" Mode="TwoWay" UpdateSourceTrigger="LostFocus">
+                                            <Binding.ValidationRules>
+                                                <StaticResource ResourceKey="StringValidationRule"/>
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn 
+                        Header="Отчество" 
+                        Width="6.5*"
+                        x:Key="dgcWorkerPatronymic"
+                        x:Shared="False">
+
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Style="{StaticResource ResourceKey=HasValidation}">
+                                    <TextBox.Text>
+                                        <Binding Path="Patronymic" Mode="TwoWay" UpdateSourceTrigger="LostFocus">
+                                            <Binding.ValidationRules>
+                                                <StaticResource ResourceKey="StringValidationRule"/>
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn 
+                        Header="Подразделение" 
+                        Width="12.5*"
+                        x:Key="dgcWorkerDepartment"
+                        x:Shared="False">
+
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate >
+                                <TextBlock 
+                                    Tag="{Binding Path=DepartmentId, Mode=OneWay, Converter={StaticResource ResourceKey=DepartmentIdConverter}}"
+                                    Text="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Tag.Name, Mode=OneWay}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+
+                        <DataGridTemplateColumn.CellEditingTemplate>
+                            <DataTemplate>
+                                <Expander 
+                                    HorizontalAlignment="Stretch"
+                                    Tag="{Binding ElementName=cmbDep, Path=SelectedItem}">
+                                    <Expander.Header>
+                                        <Grid>
+                                            <ComboBox 
+                                                x:Name="cmbDep"
+                                                Style="{StaticResource ResourceKey=HasValidation}"
+                                                ItemsSource="{StaticResource ResourceKey=Departments}"
+                                                HorizontalAlignment="{Binding HorizontalAlignment, RelativeSource={RelativeSource AncestorType=ContentPresenter}, Mode=OneWayToSource}"
+                                                SelectedValuePath="Name">
+                                                <ComboBox.SelectedItem>
+                                                    <Binding
+                                                    Path="DepartmentId"
+                                                    Converter="{StaticResource ResourceKey=DepartmentIdConverter}">
+                                                        <Binding.ValidationRules>
+                                                            <StaticResource ResourceKey="DepartmentIdValidationRule"/>
+                                                        </Binding.ValidationRules>
+                                                    </Binding>
+                                                </ComboBox.SelectedItem>
+                                            </ComboBox>
+                                        </Grid>
+                                    </Expander.Header>
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="1*"/>
+                                                <ColumnDefinition Width="3*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+
+                                            <TextBlock 
+                                                Grid.Row="0" Grid.Column="0"
+                                                Background="White"
+                                                Text="Название" />
+                                            <TextBox 
+                                                Grid.Row="0" Grid.Column="1"
+                                                Text="{Binding RelativeSource={RelativeSource AncestorType=Expander}, Path=Tag.Name, Mode=TwoWay}"/>
+
+                                        </Grid>
+
+                                    </Expander>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>
+
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn 
+                        Header="Должность" 
+                        Width="11*"
+                        x:Key="dgcWorkerPosition"
+                        x:Shared="False">
+
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Style="{StaticResource ResourceKey=HasValidation}">
+                                    <TextBox.Text>
+                                        <Binding Path="Position" Mode="TwoWay" UpdateSourceTrigger="LostFocus">
+                                            <Binding.ValidationRules>
+                                                <StaticResource ResourceKey="StringValidationRule"/>
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn 
+                        Header="Оклад (₽)" 
+                        Width="10*"
+                        x:Key="dgcWorkerSalary"
+                        x:Shared="False">
+
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Style="{StaticResource ResourceKey=HasValidation}">
+                                    <TextBox.Text>
+                                        <Binding Path="Salary" Mode="TwoWay" UpdateSourceTrigger="LostFocus" Converter="{StaticResource ResourceKey=DecimalConverter}">
+                                            <Binding.ValidationRules>
+                                                <StaticResource ResourceKey="NonNegativeDecimalValidationRule"/>
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+
+                    </DataGridTemplateColumn>
+
+                </TabItem.Resources>
+
+                <Grid>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="6*"/>
+                        <RowDefinition Height="1.5*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="3*"/>
+                    </Grid.RowDefinitions>
+
+                    <DataGrid AutoGenerateColumns="False" 
+                              CanUserAddRows="False"
+                              x:Name="dgWorkers"
+                              Grid.Row="0"
+                              SelectionUnit="FullRow"
+                              ItemsSource="{Binding Path=Workers}"
+                              SelectionChanged="DenySelectionChanged">
+
+                        <DataGrid.Columns>
+
+                            <StaticResource ResourceKey="dgcWorkerLastName"  />
+                            <StaticResource ResourceKey="dgcWorkerFirstName" />
+                            <StaticResource ResourceKey="dgcWorkerPatronymic" />
+                            <StaticResource ResourceKey="dgcWorkerDepartment" />
+                            <StaticResource ResourceKey="dgcWorkerPosition" />
+                            <StaticResource ResourceKey="dgcWorkerSalary" />
+
+                        </DataGrid.Columns>
+
+                    </DataGrid>
+
+                    <Button HorizontalAlignment="Right"
+                            Width="100" Height="30" Margin="10"
+                            Name="btnDelWorker"
+                            Grid.Row="1">
+                        Удалить
+                    </Button>
+
+                    <GridSplitter Grid.Row="2" Height="3" HorizontalAlignment="Stretch"
+                                  ShowsPreview="True"/>
+
+                    <GroupBox Header="Добавление сотрудника" 
+                              Grid.Row="3">
+
+                        <StackPanel>
+
+                            <DataGrid AutoGenerateColumns="False" 
+                                    CanUserAddRows="False"
+                                    x:Name="dgWorkerToAdd"
+                                    SelectionChanged="DenySelectionChanged"
+                                    ItemsSource="{Binding Path=WorkerToAdd}">
+
+                                <DataGrid.Columns>
+
+                                    <StaticResource ResourceKey="dgcWorkerLastName"  />
+                                    <StaticResource ResourceKey="dgcWorkerFirstName" />
+                                    <StaticResource ResourceKey="dgcWorkerPatronymic" />
+                                    <StaticResource ResourceKey="dgcWorkerDepartment" />
+                                    <StaticResource ResourceKey="dgcWorkerPosition" />
+                                    <StaticResource ResourceKey="dgcWorkerSalary" />
+
+                                </DataGrid.Columns>
+
+                            </DataGrid>
+
+                            <Button HorizontalAlignment="Right"
+                                    Width="100" Height="30" Margin="10"
+                                    Name="btnAddWorker">
+                                Добавить
+                            </Button>
+
+                        </StackPanel>
+
+                    </GroupBox>
+
+                </Grid>
+
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
